@@ -1,0 +1,107 @@
+CREATE SCHEMA "statistics'test";
+SET search_path TO "statistics'test";
+SET citus.next_shard_id TO 980000;
+SET client_min_messages TO WARNING;
+SET citus.shard_count TO 32;
+SET citus.shard_replication_factor TO 1;
+-- test create statistics propagation
+CREATE TABLE test_stats (
+    a   int,
+    b   int
+);
+SELECT create_distributed_table('test_stats', 'a');
+ create_distributed_table
+---------------------------------------------------------------------
+
+(1 row)
+
+CREATE STATISTICS s1 (dependencies) ON a, b FROM test_stats;
+-- test for distributing an already existing statistics
+CREATE TABLE test_stats2 (
+    a   int,
+    b   int
+);
+CREATE STATISTICS s2 (dependencies) ON a, b FROM test_stats;
+SELECT create_distributed_table('test_stats2', 'a');
+ create_distributed_table
+---------------------------------------------------------------------
+
+(1 row)
+
+-- test when stats is on a different schema
+CREATE SCHEMA sc1;
+CREATE TABLE tbl (a int, b int);
+SELECT create_distributed_table ('tbl', 'a');
+ create_distributed_table
+---------------------------------------------------------------------
+
+(1 row)
+
+CREATE STATISTICS sc1.st1 ON a, b FROM tbl;
+\c - - - :worker_1_port
+SELECT stxname FROM pg_statistic_ext ORDER BY stxname ASC;
+  stxname
+---------------------------------------------------------------------
+ s1_980000
+ s1_980002
+ s1_980004
+ s1_980006
+ s1_980008
+ s1_980010
+ s1_980012
+ s1_980014
+ s1_980016
+ s1_980018
+ s1_980020
+ s1_980022
+ s1_980024
+ s1_980026
+ s1_980028
+ s1_980030
+ s2_980000
+ s2_980002
+ s2_980004
+ s2_980006
+ s2_980008
+ s2_980010
+ s2_980012
+ s2_980014
+ s2_980016
+ s2_980018
+ s2_980020
+ s2_980022
+ s2_980024
+ s2_980026
+ s2_980028
+ s2_980030
+ st1_980064
+ st1_980066
+ st1_980068
+ st1_980070
+ st1_980072
+ st1_980074
+ st1_980076
+ st1_980078
+ st1_980080
+ st1_980082
+ st1_980084
+ st1_980086
+ st1_980088
+ st1_980090
+ st1_980092
+ st1_980094
+(48 rows)
+
+SELECT count(DISTINCT stxnamespace) FROM pg_statistic_ext;
+ count
+---------------------------------------------------------------------
+     2
+(1 row)
+
+\c - - - :master_port
+DROP SCHEMA "statistics'test" CASCADE;
+NOTICE:  drop cascades to 3 other objects
+DETAIL:  drop cascades to table "statistics'test".test_stats
+drop cascades to table "statistics'test".test_stats2
+drop cascades to table "statistics'test".tbl
+DROP SCHEMA sc1 CASCADE;
