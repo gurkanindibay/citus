@@ -1052,13 +1052,6 @@ DeferErrorIfCannotPushdownSubquery(Query *subqueryTree, bool outerMostQueryHasLi
 		}
 	}
 
-	deferredError = DeferErrorIfFromClauseRecurs(subqueryTree);
-	if (deferredError)
-	{
-		return deferredError;
-	}
-
-
 	/* finally check and return deferred if not satisfied */
 	if (!preconditionsSatisfied)
 	{
