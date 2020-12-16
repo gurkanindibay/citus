@@ -1794,6 +1794,11 @@ PartitionColumnForPushedDownSubquery(Query *query)
 	TargetEntry *targetEntry = NULL;
 	foreach_ptr(targetEntry, targetEntryList)
 	{
+		if (targetEntry->resjunk)
+		{
+			continue;
+		}
+
 		Expr *targetExpression = targetEntry->expr;
 		if (IsA(targetExpression, Var))
 		{
