@@ -1,3 +1,5 @@
+### citus vgindibay_test (December 17, 2020) ###
+
 ### citus v9.5.1 (December 1, 2020) ###
 
 * Enables PostgreSQL's parallel queries on EXPLAIN ANALYZE
