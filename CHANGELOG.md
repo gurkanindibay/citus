@@ -1,3 +1,7 @@
+### citus vgindibay_test (December 18, 2020) ###
+
+* Not consider single shard hash dist. tables as replicated
+
 ### citus v9.5.1 (December 1, 2020) ###
 
 * Enables PostgreSQL's parallel queries on EXPLAIN ANALYZE
