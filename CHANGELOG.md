@@ -1,3 +1,15 @@
+### citus v9.4.0 (December 18, 2020) ###
+
+* Add support for co-located/recurring correlated subqueries
+
+* Not consider single shard hash dist. tables as replicated
+
+* Fixes transaction name calculation comment in `remote_transaction.c`
+
+* Deletes transactions when removing a node
+
+* Implementation of propagating schema renamings
+
 ### citus v9.5.1 (December 1, 2020) ###
 
 * Enables PostgreSQL's parallel queries on EXPLAIN ANALYZE
