@@ -11,14 +11,14 @@ endif
 
 include Makefile.global
 
-all: extension pg_send_cancellation columnar
+all: extension pg_send_cancellation
 
 
 # build columnar only
 columnar:
 	$(MAKE) -C src/backend/columnar all
 # build extension
-extension: $(citus_top_builddir)/src/include/citus_version.h
+extension: $(citus_top_builddir)/src/include/citus_version.h columnar
 	$(MAKE) -C src/backend/distributed/ all
 install-columnar: columnar
 	$(MAKE) -C src/backend/columnar install
