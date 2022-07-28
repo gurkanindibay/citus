@@ -11,10 +11,12 @@ endif
 
 include Makefile.global
 
-all: columnar extension pg_send_cancellation
+all: extension pg_send_cancellation columnar
 
 
-
+# build columnar only
+columnar:
+	$(MAKE) -C src/backend/columnar all
 # build extension
 extension: $(citus_top_builddir)/src/include/citus_version.h
 	$(MAKE) -C src/backend/distributed/ all
@@ -31,6 +33,7 @@ install-headers: extension
 
 clean-extension:
 	$(MAKE) -C src/backend/distributed/ clean
+	$(MAKE) -C src/backend/columnar/ clean
 clean-full:
 	$(MAKE) -C src/backend/distributed/ clean-full
 .PHONY: extension install-extension clean-extension clean-full
@@ -38,6 +41,7 @@ clean-full:
 install-downgrades:
 	$(MAKE) -C src/backend/distributed/ install-downgrades
 install-all: install-headers install-pg_send_cancellation
+	$(MAKE) -C src/backend/columnar/ install-all
 	$(MAKE) -C src/backend/distributed/ install-all
 
 # build citus_send_cancellation binary
@@ -63,9 +67,5 @@ check-style:
 # depend on install-all so that downgrade scripts are installed as well
 check: all install-all
 	$(MAKE) -C src/test/regress check-full
-
-# build columnar only
-columnar:
-	$(MAKE) -C src/backend/columnar all
 
 .PHONY: all check clean install install-downgrades install-all
