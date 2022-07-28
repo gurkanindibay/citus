@@ -14,9 +14,7 @@ include Makefile.global
 all: extension pg_send_cancellation
 
 
-# build columnar only
-columnar:
-	$(MAKE) -C src/backend/columnar all
+
 # build extension
 extension: $(citus_top_builddir)/src/include/citus_version.h columnar
 	$(MAKE) -C src/backend/distributed/ all
@@ -67,5 +65,9 @@ check-style:
 # depend on install-all so that downgrade scripts are installed as well
 check: all install-all
 	$(MAKE) -C src/test/regress check-full
+
+# build columnar only
+columnar:
+	$(MAKE) -C src/backend/columnar all
 
 .PHONY: all check clean install install-downgrades install-all
